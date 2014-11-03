@@ -1,0 +1,22 @@
+{
+	"ImportPath": "github.com/Scalingo/godns",
+	"GoVersion": "go1.3.3",
+	"Packages": [
+		"github.com/Scalingo/godns"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0",
+			"Rev": "2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2"
+		},
+		{
+			"ImportPath": "github.com/hoisie/redis",
+			"Rev": "788f01e396a99c96c8f56338383926f16841ebae"
+		},
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Rev": "d8da4d2fa735ac1925a7c52ca3cbaac10ec45aa7"
+		}
+	]
+}
