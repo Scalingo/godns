@@ -1,20 +1,20 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
+	"runtime/pprof"
 	"time"
 )
 
 var (
-	logger *log.Logger
+	logger *GoDNSLogger
 )
 
 func main() {
 
-	logger = initLogger(settings.Log.File)
+	initLogger()
 
 	server := &Server{
 		host:     settings.Server.Host,
@@ -25,7 +25,12 @@ func main() {
 
 	server.Run()
 
-	logger.Printf("godns %s start", settings.Version)
+	logger.Info("godns %s start", settings.Version)
+
+	if settings.Debug {
+		go profileCPU()
+		go profileMEM()
+	}
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt)
@@ -34,31 +39,55 @@ forever:
 	for {
 		select {
 		case <-sig:
-			logger.Printf("signal received, stopping")
+			logger.Info("signal received, stopping")
 			break forever
 		}
 	}
 
 }
 
-func Debug(format string, v ...interface{}) {
-	if settings.Debug {
-		logger.Printf(format, v...)
+func profileCPU() {
+	f, err := os.Create("godns.cprof")
+	if err != nil {
+		logger.Error("%s", err)
+		return
 	}
+
+	pprof.StartCPUProfile(f)
+	time.AfterFunc(6*time.Minute, func() {
+		pprof.StopCPUProfile()
+		f.Close()
+
+	})
 }
 
-func initLogger(log_file string) (logger *log.Logger) {
-	if log_file != "" {
-		f, err := os.Create(log_file)
-		if err != nil {
-			os.Exit(1)
-		}
-		logger = log.New(f, "[godns]", log.Ldate|log.Ltime)
-	} else {
-		logger = log.New(os.Stdout, "[godns]", log.Ldate|log.Ltime)
+func profileMEM() {
+	f, err := os.Create("godns.mprof")
+	if err != nil {
+		logger.Error("%s", err)
+		return
 	}
-	return logger
 
+	time.AfterFunc(5*time.Minute, func() {
+		pprof.WriteHeapProfile(f)
+		f.Close()
+	})
+
+}
+
+func initLogger() {
+	logger = NewLogger()
+
+	if settings.Log.Stdout {
+		logger.SetLogger("console", nil)
+	}
+
+	if settings.Log.File != "" {
+		config := map[string]interface{}{"file": settings.Log.File}
+		logger.SetLogger("file", config)
+	}
+
+	logger.SetLevel(settings.Log.LogLevel())
 }
 
 func init() {

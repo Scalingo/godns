@@ -3,14 +3,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/BurntSushi/toml"
 	"os"
 	"strconv"
+
+	"github.com/BurntSushi/toml"
 )
 
 var (
 	settings Settings
 )
+
+var LogLevelMap = map[string]int{
+	"DEBUG":  LevelDebug,
+	"INFO":   LevelInfo,
+	"NOTICE": LevelNotice,
+	"WARN":   LevelWarn,
+	"ERROR":  LevelError,
+}
 
 type Settings struct {
 	Version      string
@@ -18,6 +27,7 @@ type Settings struct {
 	Server       DNSServerSettings `toml:"server"`
 	ResolvConfig ResolvSettings    `toml:"resolv"`
 	Redis        RedisSettings     `toml:"redis"`
+	Memcache     MemcacheSettings  `toml:"memcache"`
 	Log          LogSettings       `toml:"log"`
 	Cache        CacheSettings     `toml:"cache"`
 	Hosts        HostsSettings     `toml:"hosts"`
@@ -26,6 +36,8 @@ type Settings struct {
 type ResolvSettings struct {
 	ResolvFile string `toml:"resolv-file"`
 	Timeout    int
+	Interval   int
+	SetEDNS0   bool
 }
 
 type DNSServerSettings struct {
@@ -40,12 +52,26 @@ type RedisSettings struct {
 	Password string
 }
 
+type MemcacheSettings struct {
+	Servers []string
+}
+
 func (s RedisSettings) Addr() string {
 	return s.Host + ":" + strconv.Itoa(s.Port)
 }
 
 type LogSettings struct {
-	File string
+	Stdout bool
+	File   string
+	Level  string
+}
+
+func (ls LogSettings) LogLevel() int {
+	l, ok := LogLevelMap[ls.Level]
+	if !ok {
+		panic("Config error: invalid log level: " + ls.Level)
+	}
+	return l
 }
 
 type CacheSettings struct {
@@ -55,10 +81,12 @@ type CacheSettings struct {
 }
 
 type HostsSettings struct {
-	Enable    bool
-	HostsFile string `toml:"host-file"`
-	RedisKey  string `toml:"redis-key"`
-	TTL       uint32 `toml:"ttl"`
+	Enable          bool
+	HostsFile       string `toml:"host-file"`
+	RedisEnable     bool   `toml:"redis-enable"`
+	RedisKey        string `toml:"redis-key"`
+	TTL             uint32 `toml:"ttl"`
+	RefreshInterval uint32 `toml:"refresh-interval"`
 }
 
 func init() {
