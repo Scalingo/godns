@@ -118,9 +118,11 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 					Class:  dns.ClassINET,
 					Ttl:    settings.Hosts.TTL,
 				}
-				for _, ip := range ips {
-					aaaa := &dns.AAAA{rr_header, ip}
-					m.Answer = append(m.Answer, aaaa)
+				if settings.ResolvConfig.IPv6 {
+					for _, ip := range ips {
+						aaaa := &dns.AAAA{rr_header, ip}
+						m.Answer = append(m.Answer, aaaa)
+					}
 				}
 			}
 

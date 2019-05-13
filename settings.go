@@ -39,6 +39,7 @@ type ResolvSettings struct {
 	SetEDNS0       bool
 	ServerListFile string `toml:"server-list-file"`
 	ResolvFile     string `toml:"resolv-file"`
+	IPv6           bool   `toml:"ipv6"`
 }
 
 type DNSServerSettings struct {
