@@ -1,0 +1,18 @@
+version: '3'
+services:
+  godns:
+    build: .
+    volumes:
+      - ./:/go/src/github.com/Scalingo/godns
+    ports:
+      - "5353:5353/udp"
+    command: reflex -r '\.go$$' --inverse-regex='_test\.go$$' --inverse-regex='_mock\.go$$' --inverse-regex='migrations/*$$' -s -- sh -c 'go build && ./godns -c ./etc/godns.conf'
+
+  test:
+    build: .
+    volumes:
+      - ./:/go/src/github.com/Scalingo/godns
+    environment:
+      GO_ENV: test
+    stop_signal: SIGKILL
+    command: "tail -F /dev/null"
