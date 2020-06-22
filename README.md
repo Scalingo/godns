@@ -1,50 +1,38 @@
-GODNS
-====
+# GODNS
 
-A simple and fast dns cache server written by go.
+A simple and fast DNS cache server written in Go.
 
 
 Similar to [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html), but supports some difference features:
 
 
-* Keep hosts records in redis and the local file /etc/hosts  
+* Keep hosts records in Redis and the local file /etc/hosts
 
 * Auto-Reloads when hosts configuration is changed. (Yes, dnsmasq needs to be reloaded)
 
 
-## Installation & Running
+## Local Deployment
 
-1. Install  
+Start GoDNS:
 
-		$ go get github.com/kenshinx/godns
+```shell
+docker-compose up
+```
 
+DNS query to GoDNS:
 
-2. Build  
+```shell
+dig @172.17.0.1 -p 5353 www.github.com
+```
 
-		$ cd $GOPATH/src/github.com/kenshinx/godns 
-		$ go build -o godns 
-
-
-3. Running  
-
-		$ sudo ./godns -c ./etc/godns.conf
-
-4. Test
-        
-        $ dig www.github.com @127.0.0.1
-
-
-
-## Use godns 
+## Use GoDNS
 
 		$ sudo vi /etc/resolv.conf
 		nameserver #the ip of godns running
 
 ## Configuration
 
-All the configuration in `godns.conf` is a TOML format config file.   
-More about Toml :[https://github.com/mojombo/toml](https://github.com/mojombo/toml)
-
+All the configuration in `godns.conf` is a TOML format config file.
 
 #### resolv.conf
 
@@ -70,7 +58,7 @@ Only the local memory storage backend is currently implemented.  The redis backe
 
 ```
 [cache]
-backend = "memory"   
+backend = "memory"
 expire = 600  # default expire time 10 minutes
 maxcount = 100000
 ```
@@ -84,7 +72,7 @@ Force resolve domain to assigned ip, support two types hosts configuration:
 * locale hosts file
 * remote redis hosts
 
-__hosts file__  
+__hosts file__
 
 can be assigned at godns.conf,default : `/etc/hosts`
 
@@ -92,15 +80,15 @@ can be assigned at godns.conf,default : `/etc/hosts`
 [hosts]
 host-file = "/etc/hosts"
 ```
-Hosts file format is described in [linux man pages](http://man7.org/linux/man-pages/man5/hosts.5.html). 
+Hosts file format is described in [linux man pages](http://man7.org/linux/man-pages/man5/hosts.5.html).
 More than that , `*.` wildcard is supported additional.
 
 
-__redis hosts__ 
+__redis hosts__
 
-This is a special requirment in our system. Must maintain a global hosts configuration, 
+This is a special requirment in our system. Must maintain a global hosts configuration,
 and support update the host records from other remote server.
-Therefore, while "redis-hosts" be enabled, will query the redis db when each dns request is reached.  
+Therefore, while "redis-hosts" be enabled, will query the redis db when each dns request is reached.
 
 The hosts record is organized with redis hash map. and the key of the map is configured.
 
@@ -140,13 +128,13 @@ The result : 15342 queries/per second
 
 The test environment:
 
-CentOS release 6.4 
+CentOS release 6.4
 
-* CPU:  
-Intel Xeon 2.40GHZ 
+* CPU:
+Intel Xeon 2.40GHZ
 4 cores
 
-* MEM:  
+* MEM:
 46G
 
 
@@ -154,7 +142,7 @@ Intel Xeon 2.40GHZ
 
 Joke: A web console for godns
 
-[https://github.com/kenshinx/joke](https://github.com/kenshinx/joke) 
+[https://github.com/kenshinx/joke](https://github.com/kenshinx/joke)
 
 screenshot
 
@@ -187,6 +175,3 @@ stdout_logfile = /var/log/godns.log
 
 ## LICENSE
 godns is under the MIT license. See the LICENSE file for details.
-
-
-
