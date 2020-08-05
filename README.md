@@ -19,10 +19,23 @@ Start GoDNS:
 docker-compose up
 ```
 
+You may see the error:
+
+```text
+Error starting userland proxy: listen udp 0.0.0.0:5321: bind: address already in use
+```
+
+It means there is another process on your server listening on the UDP port 5321.
+You can list the process listening on this port with:
+
+```bash
+sudo netstat -tulpn | grep 5321
+```
+
 DNS query to GoDNS:
 
 ```shell
-dig @172.17.0.1 -p 5353 www.github.com
+dig @172.17.0.1 -p 5321 www.github.com
 ```
 
 ## Use GoDNS
