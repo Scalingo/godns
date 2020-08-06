@@ -89,7 +89,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	} else {
 		remote = w.RemoteAddr().(*net.UDPAddr).IP
 	}
-	logger.Info("%s lookup　%s", remote, Q.String())
+	logger.Info("%s lookup %s", remote, Q.String())
 
 	IPQuery := h.isIPQuery(q)
 
