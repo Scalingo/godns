@@ -141,7 +141,14 @@ func (r *RedisHosts) Refresh() {
 	r.clear()
 	err := r.redis.Hgetall(r.key, r.hosts)
 	if err != nil {
-		logger.Warn("Update hosts records from redis failed %s", err)
+		if strings.Contains(err.Error(), "Key `godns:hosts` does not exist") {
+			// The error when the key does not exist isnot really important and itcan
+			// happen in dev. Displaying the INFO message in a loop is not really
+			// relevant in this situation.
+			logger.Debug("Update hosts records from redis failed %s", err)
+		} else {
+			logger.Info("Update hosts records from redis failed %s", err)
+		}
 	} else {
 		logger.Debug("Update hosts records from redis")
 	}

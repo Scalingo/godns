@@ -152,11 +152,11 @@ func (r *Resolver) Lookup(net string, req *dns.Msg) (message *dns.Msg, err error
 			return
 		}
 		// If SERVFAIL happen, should return immediately and try another upstream resolver.
-		// However, other Error code like NXDOMAIN is an clear response stating
-		// that it has been verified no such domain existas and ask other resolvers
+		// However, other Error code like NXDOMAIN is a clear response stating
+		// that it has been verified no such domain exists and ask other resolvers
 		// would make no sense. See more about #20
 		if r != nil && r.Rcode != dns.RcodeSuccess {
-			logger.Warn("%s failed to get an valid answer on %s", qname, nameserver)
+			logger.Warn("%s failed to get a valid answer on %s", qname, nameserver)
 			if r.Rcode == dns.RcodeServerFailure {
 				return
 			}
