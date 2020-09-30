@@ -6,7 +6,7 @@ services:
       - ./:/go/src/github.com/Scalingo/godns
     ports:
       - "5321:5321/udp"
-    command: reflex -r '\.go$$' --inverse-regex='_test\.go$$' --inverse-regex='_mock\.go$$' --inverse-regex='migrations/*$$' -s -- sh -c 'go build && ./godns -c ./etc/godns.conf'
+    command: reflex -r '\.go$$' --inverse-regex='_test\.go$$' --inverse-regex='_mock\.go$$' --inverse-regex='migrations/*$$' -s -- sh -c 'go build && ./godns -c ./dev/godns.conf'
 
   test:
     build: .
