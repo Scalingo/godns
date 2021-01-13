@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/bradfitz/gomemcache v0.0.0-20170208213004-1952afaa557d
+	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b
 	github.com/gopherjs/gopherjs v0.0.0-20171102034023-444abdf92094 // indirect
 	github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0
 	github.com/jtolds/gls v4.2.1+incompatible // indirect

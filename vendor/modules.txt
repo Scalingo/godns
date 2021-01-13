@@ -1,7 +1,7 @@
 # github.com/BurntSushi/toml v0.3.1
 ## explicit
 github.com/BurntSushi/toml
-# github.com/bradfitz/gomemcache v0.0.0-20170208213004-1952afaa557d
+# github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b
 ## explicit
 github.com/bradfitz/gomemcache/memcache
 # github.com/gopherjs/gopherjs v0.0.0-20171102034023-444abdf92094
