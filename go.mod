@@ -7,7 +7,7 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0
-	github.com/miekg/dns v1.0.14
+	github.com/miekg/dns v1.1.35
 	github.com/smartystreets/goconvey v1.6.4
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
