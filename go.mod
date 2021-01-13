@@ -3,7 +3,7 @@ module github.com/Scalingo/godns
 go 1.15
 
 require (
-	github.com/BurntSushi/toml v0.3.0
+	github.com/BurntSushi/toml v0.3.1
 	github.com/bradfitz/gomemcache v0.0.0-20170208213004-1952afaa557d
 	github.com/gopherjs/gopherjs v0.0.0-20171102034023-444abdf92094 // indirect
 	github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0

@@ -1,4 +1,4 @@
-# github.com/BurntSushi/toml v0.3.0
+# github.com/BurntSushi/toml v0.3.1
 ## explicit
 github.com/BurntSushi/toml
 # github.com/bradfitz/gomemcache v0.0.0-20170208213004-1952afaa557d
