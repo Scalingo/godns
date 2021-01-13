@@ -1,2 +1,5 @@
 /bin
 /godns
+godns.mprof
+godns.cprof
+godns.log
