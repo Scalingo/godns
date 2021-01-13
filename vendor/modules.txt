@@ -1,0 +1,42 @@
+# github.com/BurntSushi/toml v0.3.0
+## explicit
+github.com/BurntSushi/toml
+# github.com/bradfitz/gomemcache v0.0.0-20170208213004-1952afaa557d
+## explicit
+github.com/bradfitz/gomemcache/memcache
+# github.com/gopherjs/gopherjs v0.0.0-20171102034023-444abdf92094
+## explicit
+github.com/gopherjs/gopherjs/js
+# github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0
+## explicit
+github.com/hoisie/redis
+# github.com/jtolds/gls v4.2.1+incompatible
+## explicit
+github.com/jtolds/gls
+# github.com/miekg/dns v1.0.3
+## explicit
+github.com/miekg/dns
+# github.com/smartystreets/assertions v0.0.0-20170925172151-0b37b35ec743
+## explicit
+github.com/smartystreets/assertions
+github.com/smartystreets/assertions/internal/go-render/render
+github.com/smartystreets/assertions/internal/oglematchers
+# github.com/smartystreets/goconvey v1.6.3
+## explicit
+github.com/smartystreets/goconvey/convey
+github.com/smartystreets/goconvey/convey/gotest
+github.com/smartystreets/goconvey/convey/reporting
+# github.com/smartystreets/gunit v1.4.2
+## explicit
+# golang.org/x/crypto v0.0.0-20180112200814-13931e22f9e7
+## explicit
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+# golang.org/x/net v0.0.0-20180112015858-5ccada7d0a7b
+## explicit
+golang.org/x/net/bpf
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
+golang.org/x/net/ipv4
+golang.org/x/net/ipv6
+golang.org/x/net/publicsuffix
