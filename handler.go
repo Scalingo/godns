@@ -108,7 +108,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 					Ttl:    settings.Hosts.TTL,
 				}
 				for _, ip := range ips {
-					a := &dns.A{rr_header, ip}
+					a := &dns.A{Hdr: rr_header, A: ip}
 					m.Answer = append(m.Answer, a)
 				}
 			case _IP6Query:
@@ -120,7 +120,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 				}
 				if settings.ResolvConfig.IPv6 {
 					for _, ip := range ips {
-						aaaa := &dns.AAAA{rr_header, ip}
+						aaaa := &dns.AAAA{Hdr: rr_header, AAAA: ip}
 						m.Answer = append(m.Answer, aaaa)
 					}
 				}
@@ -137,7 +137,7 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	key := KeyGen(Q)
 	mesg, err := h.cache.Get(key)
 	if err != nil {
-		if mesg, err = h.negCache.Get(key); err != nil {
+		if _, err = h.negCache.Get(key); err != nil {
 			logger.Debug("%s didn't hit cache", Q.String())
 		} else {
 			logger.Debug("%s hit negative cache", Q.String())
