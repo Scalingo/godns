@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"strings"
 	"time"
 
 	"github.com/miekg/dns"
@@ -90,6 +91,33 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 		remote = w.RemoteAddr().(*net.UDPAddr).IP
 	}
 	logger.Info("%s lookup %s", remote, Q.String())
+
+	// We don't care of other type of requests than A, so fail fast returning an
+	// empty DNS response, NOERROR status and the SOA in the Authority Section as
+	// required by RFC https://datatracker.ietf.org/doc/html/rfc2308
+	if len(settings.Hosts.Zone) > 0 && q.Qtype != dns.TypeA && strings.HasSuffix(q.Name, settings.Hosts.Zone) {
+		m := new(dns.Msg)
+		m.SetReply(req)
+		soa := &dns.SOA{
+			Ns:      settings.Hosts.ZoneNs,
+			Mbox:    settings.Hosts.ZoneMbox,
+			Serial:  settings.Hosts.ZoneSerial,
+			Refresh: settings.Hosts.ZoneRefresh,
+			Retry:   settings.Hosts.ZoneRetry,
+			Expire:  settings.Hosts.ZoneExpire,
+			Minttl:  settings.Hosts.ZoneNegcacheTtl,
+			Hdr: dns.RR_Header{
+				Name:   q.Name,
+				Rrtype: dns.TypeSOA,
+				Class:  dns.ClassINET,
+				Ttl:    settings.Hosts.ZoneSoaTtl,
+			},
+		}
+		m.Ns = append(m.Ns, soa)
+		logger.Warn("Non supported request %v, returning empty response", Q.String())
+		w.WriteMsg(m)
+		return
+	}
 
 	IPQuery := h.isIPQuery(q)
 

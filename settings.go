@@ -89,6 +89,15 @@ type HostsSettings struct {
 	RedisKey        string `toml:"redis-key"`
 	TTL             uint32 `toml:"ttl"`
 	RefreshInterval uint32 `toml:"refresh-interval"`
+	Zone            string `toml:"zone"`
+	ZoneNs          string `toml:"zone-ns"`
+	ZoneMbox        string `toml:"zone-mbox"`
+	ZoneSerial      uint32 `toml:"zone-serial"`
+	ZoneRefresh     uint32 `toml:"zone-refresh"`
+	ZoneRetry       uint32 `toml:"zone-retry"`
+	ZoneExpire      uint32 `toml:"zone-expire"`
+	ZoneNegcacheTtl uint32 `toml:"zone-negcache-ttl"`
+	ZoneSoaTtl      uint32 `toml:"zone-soa-ttl"`
 }
 
 func init() {
