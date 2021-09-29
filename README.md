@@ -122,6 +122,30 @@ Compared with file-backend records, redis-backend hosts support multiple A entri
 redis > hset godns:hosts www.test.com 1.1.1.1,2.2.2.2
 ```
 
+__Zone configuration__
+
+Specific configuration if you want your godns instance to only respond to one DNS Zone
+
+```
+zone = 'example.test.'
+zone-ns = "ns-cloud-b1.googledomains.com."
+zone-mbox = "cloud-dns-hostmaster.google.com."
+zone-serial = 1
+zone-refresh = 21600
+zone-retry = 3600
+zone-expire = 259200
+zone-negcache-ttl = 30
+zone-soa-ttl = 3600
+```
+
+If `zone` is set, all the other parameters should be set. These parameters are
+used when one domain is not found in the hosts (file or redis), we return a
+"NODATA" dns response.  According to the RFC, it should contain the SOA entry
+in order to be cached correctly by other DNS servers.
+
+If another domain than `zone` is queried, GoDNS will respond with rcode `REFUSED`
+since only the specified zone will be responded to.
+
 
 ## Benchmark
 
