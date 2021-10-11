@@ -18,7 +18,7 @@ github.com/miekg/dns
 github.com/smartystreets/assertions
 github.com/smartystreets/assertions/internal/go-render/render
 github.com/smartystreets/assertions/internal/oglematchers
-# github.com/smartystreets/goconvey v1.6.4
+# github.com/smartystreets/goconvey v1.6.6
 ## explicit
 github.com/smartystreets/goconvey/convey
 github.com/smartystreets/goconvey/convey/gotest
