@@ -2,7 +2,6 @@ package main
 
 import (
 	"net"
-	"strings"
 	"time"
 
 	"github.com/miekg/dns"
@@ -95,10 +94,11 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 	// We don't care of other type of requests than A, so fail fast returning an
 	// empty DNS response, NOERROR status and the SOA in the Authority Section as
 	// required by RFC https://datatracker.ietf.org/doc/html/rfc2308
-	if len(settings.Hosts.Zone) > 0 {
+	if IsZonesFilteringEnabled() {
 		m := new(dns.Msg)
 		m.SetReply(req)
-		if !strings.HasSuffix(q.Name, settings.Hosts.Zone) {
+		zone, found := ZoneConfigForDomain(q.Name)
+		if !found {
 			m.Rcode = dns.RcodeRefused
 			logger.Info("%s Non supported zone %v, returning rcode REFUSED", remote, Q.String())
 			w.WriteMsg(m)
@@ -107,13 +107,13 @@ func (h *GODNSHandler) do(Net string, w dns.ResponseWriter, req *dns.Msg) {
 
 		if q.Qtype != dns.TypeA {
 			soa := &dns.SOA{
-				Ns:      settings.Hosts.ZoneNs,
-				Mbox:    settings.Hosts.ZoneMbox,
-				Serial:  settings.Hosts.ZoneSerial,
-				Refresh: settings.Hosts.ZoneRefresh,
-				Retry:   settings.Hosts.ZoneRetry,
-				Expire:  settings.Hosts.ZoneExpire,
-				Minttl:  settings.Hosts.ZoneNegcacheTtl,
+				Ns:      zone.Ns,
+				Mbox:    zone.Mbox,
+				Serial:  zone.Serial,
+				Refresh: zone.Refresh,
+				Retry:   zone.Retry,
+				Expire:  zone.Expire,
+				Minttl:  zone.NegcacheTtl,
 				Hdr: dns.RR_Header{
 					Name:   q.Name,
 					Rrtype: dns.TypeSOA,
