@@ -128,6 +128,10 @@ func init() {
 		os.Exit(1)
 	}
 
+	if settings.Zones == nil {
+		settings.Zones = make(map[string]ZoneSettings)
+	}
+
 	if len(settings.Hosts.Zone) > 0 {
 		settings.Zones["default"] = ZoneSettings{
 			Name:        settings.Hosts.Zone,
