@@ -24,13 +24,14 @@ var LogLevelMap = map[string]int{
 type Settings struct {
 	Version      string
 	Debug        bool
-	Server       DNSServerSettings `toml:"server"`
-	ResolvConfig ResolvSettings    `toml:"resolv"`
-	Redis        RedisSettings     `toml:"redis"`
-	Memcache     MemcacheSettings  `toml:"memcache"`
-	Log          LogSettings       `toml:"log"`
-	Cache        CacheSettings     `toml:"cache"`
-	Hosts        HostsSettings     `toml:"hosts"`
+	Server       DNSServerSettings       `toml:"server"`
+	ResolvConfig ResolvSettings          `toml:"resolv"`
+	Redis        RedisSettings           `toml:"redis"`
+	Memcache     MemcacheSettings        `toml:"memcache"`
+	Log          LogSettings             `toml:"log"`
+	Cache        CacheSettings           `toml:"cache"`
+	Hosts        HostsSettings           `toml:"hosts"`
+	Zones        map[string]ZoneSettings `toml:"zones"`
 }
 
 type ResolvSettings struct {
@@ -82,6 +83,18 @@ type CacheSettings struct {
 	Maxcount int
 }
 
+type ZoneSettings struct {
+	Name        string `toml:"name"`
+	Ns          string `toml:"ns"`
+	Mbox        string `toml:"mbox"`
+	Serial      uint32 `toml:"serial"`
+	Refresh     uint32 `toml:"refresh"`
+	Retry       uint32 `toml:"retry"`
+	Expire      uint32 `toml:"expire"`
+	NegcacheTtl uint32 `toml:"negcache-ttl"`
+	SoaTtl      uint32 `toml:"soa-ttl"`
+}
+
 type HostsSettings struct {
 	Enable          bool
 	HostsFile       string `toml:"host-file"`
@@ -115,9 +128,22 @@ func init() {
 		os.Exit(1)
 	}
 
+	if len(settings.Hosts.Zone) > 0 {
+		settings.Zones["default"] = ZoneSettings{
+			Name:        settings.Hosts.Zone,
+			Ns:          settings.Hosts.ZoneNs,
+			Mbox:        settings.Hosts.ZoneMbox,
+			Serial:      settings.Hosts.ZoneSerial,
+			Refresh:     settings.Hosts.ZoneRefresh,
+			Retry:       settings.Hosts.ZoneRetry,
+			Expire:      settings.Hosts.ZoneExpire,
+			NegcacheTtl: settings.Hosts.ZoneNegcacheTtl,
+			SoaTtl:      settings.Hosts.ZoneSoaTtl,
+		}
+	}
+
 	if verbose {
 		settings.Log.Stdout = true
 		settings.Log.Level = "DEBUG"
 	}
-
 }
