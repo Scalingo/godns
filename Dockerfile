@@ -1,7 +1,7 @@
-FROM golang:1.15
-MAINTAINER Étienne Michon "etienne@scalingo.com"
+FROM golang:1.17
+LABEL maintainer="Étienne Michon <etienne@scalingo.com>"
 
-RUN go get github.com/cespare/reflex
+RUN go install github.com/cespare/reflex@latest
 
 WORKDIR $GOPATH/src/github.com/Scalingo/godns
 
