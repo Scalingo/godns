@@ -12,6 +12,7 @@ var TypeToRR = map[uint16]func() RR{
 	TypeA:          func() RR { return new(A) },
 	TypeAAAA:       func() RR { return new(AAAA) },
 	TypeAFSDB:      func() RR { return new(AFSDB) },
+	TypeAMTRELAY:   func() RR { return new(AMTRELAY) },
 	TypeANY:        func() RR { return new(ANY) },
 	TypeAPL:        func() RR { return new(APL) },
 	TypeAVC:        func() RR { return new(AVC) },
@@ -34,6 +35,7 @@ var TypeToRR = map[uint16]func() RR{
 	TypeHINFO:      func() RR { return new(HINFO) },
 	TypeHIP:        func() RR { return new(HIP) },
 	TypeHTTPS:      func() RR { return new(HTTPS) },
+	TypeIPSECKEY:   func() RR { return new(IPSECKEY) },
 	TypeKEY:        func() RR { return new(KEY) },
 	TypeKX:         func() RR { return new(KX) },
 	TypeL32:        func() RR { return new(L32) },
@@ -82,6 +84,7 @@ var TypeToRR = map[uint16]func() RR{
 	TypeUINFO:      func() RR { return new(UINFO) },
 	TypeURI:        func() RR { return new(URI) },
 	TypeX25:        func() RR { return new(X25) },
+	TypeZONEMD:     func() RR { return new(ZONEMD) },
 }
 
 // TypeToString is a map of strings for each RR type.
@@ -89,6 +92,7 @@ var TypeToString = map[uint16]string{
 	TypeA:          "A",
 	TypeAAAA:       "AAAA",
 	TypeAFSDB:      "AFSDB",
+	TypeAMTRELAY:   "AMTRELAY",
 	TypeANY:        "ANY",
 	TypeAPL:        "APL",
 	TypeATMA:       "ATMA",
@@ -113,6 +117,7 @@ var TypeToString = map[uint16]string{
 	TypeHINFO:      "HINFO",
 	TypeHIP:        "HIP",
 	TypeHTTPS:      "HTTPS",
+	TypeIPSECKEY:   "IPSECKEY",
 	TypeISDN:       "ISDN",
 	TypeIXFR:       "IXFR",
 	TypeKEY:        "KEY",
@@ -168,12 +173,14 @@ var TypeToString = map[uint16]string{
 	TypeUNSPEC:     "UNSPEC",
 	TypeURI:        "URI",
 	TypeX25:        "X25",
+	TypeZONEMD:     "ZONEMD",
 	TypeNSAPPTR:    "NSAP-PTR",
 }
 
 func (rr *A) Header() *RR_Header          { return &rr.Hdr }
 func (rr *AAAA) Header() *RR_Header       { return &rr.Hdr }
 func (rr *AFSDB) Header() *RR_Header      { return &rr.Hdr }
+func (rr *AMTRELAY) Header() *RR_Header   { return &rr.Hdr }
 func (rr *ANY) Header() *RR_Header        { return &rr.Hdr }
 func (rr *APL) Header() *RR_Header        { return &rr.Hdr }
 func (rr *AVC) Header() *RR_Header        { return &rr.Hdr }
@@ -196,6 +203,7 @@ func (rr *GPOS) Header() *RR_Header       { return &rr.Hdr }
 func (rr *HINFO) Header() *RR_Header      { return &rr.Hdr }
 func (rr *HIP) Header() *RR_Header        { return &rr.Hdr }
 func (rr *HTTPS) Header() *RR_Header      { return &rr.Hdr }
+func (rr *IPSECKEY) Header() *RR_Header   { return &rr.Hdr }
 func (rr *KEY) Header() *RR_Header        { return &rr.Hdr }
 func (rr *KX) Header() *RR_Header         { return &rr.Hdr }
 func (rr *L32) Header() *RR_Header        { return &rr.Hdr }
@@ -245,6 +253,7 @@ func (rr *UID) Header() *RR_Header        { return &rr.Hdr }
 func (rr *UINFO) Header() *RR_Header      { return &rr.Hdr }
 func (rr *URI) Header() *RR_Header        { return &rr.Hdr }
 func (rr *X25) Header() *RR_Header        { return &rr.Hdr }
+func (rr *ZONEMD) Header() *RR_Header     { return &rr.Hdr }
 
 // len() functions
 func (rr *A) len(off int, compression map[string]struct{}) int {
@@ -265,6 +274,20 @@ func (rr *AFSDB) len(off int, compression map[string]struct{}) int {
 	l := rr.Hdr.len(off, compression)
 	l += 2 // Subtype
 	l += domainNameLen(rr.Hostname, off+l, compression, false)
+	return l
+}
+func (rr *AMTRELAY) len(off int, compression map[string]struct{}) int {
+	l := rr.Hdr.len(off, compression)
+	l++ // Precedence
+	l++ // GatewayType
+	switch rr.GatewayType {
+	case AMTRELAYIPv4:
+		l += net.IPv4len
+	case AMTRELAYIPv6:
+		l += net.IPv6len
+	case AMTRELAYHost:
+		l += len(rr.GatewayHost) + 1
+	}
 	return l
 }
 func (rr *ANY) len(off int, compression map[string]struct{}) int {
@@ -374,6 +397,22 @@ func (rr *HIP) len(off int, compression map[string]struct{}) int {
 	for _, x := range rr.RendezvousServers {
 		l += domainNameLen(x, off+l, compression, false)
 	}
+	return l
+}
+func (rr *IPSECKEY) len(off int, compression map[string]struct{}) int {
+	l := rr.Hdr.len(off, compression)
+	l++ // Precedence
+	l++ // GatewayType
+	l++ // Algorithm
+	switch rr.GatewayType {
+	case IPSECGatewayIPv4:
+		l += net.IPv4len
+	case IPSECGatewayIPv6:
+		l += net.IPv6len
+	case IPSECGatewayHost:
+		l += len(rr.GatewayHost) + 1
+	}
+	l += base64.StdEncoding.DecodedLen(len(rr.PublicKey))
 	return l
 }
 func (rr *KX) len(off int, compression map[string]struct{}) int {
@@ -684,6 +723,14 @@ func (rr *X25) len(off int, compression map[string]struct{}) int {
 	l += len(rr.PSDNAddress) + 1
 	return l
 }
+func (rr *ZONEMD) len(off int, compression map[string]struct{}) int {
+	l := rr.Hdr.len(off, compression)
+	l += 4 // Serial
+	l++    // Scheme
+	l++    // Hash
+	l += len(rr.Digest) / 2
+	return l
+}
 
 // copy() functions
 func (rr *A) copy() RR {
@@ -694,6 +741,9 @@ func (rr *AAAA) copy() RR {
 }
 func (rr *AFSDB) copy() RR {
 	return &AFSDB{rr.Hdr, rr.Subtype, rr.Hostname}
+}
+func (rr *AMTRELAY) copy() RR {
+	return &AMTRELAY{rr.Hdr, rr.Precedence, rr.GatewayType, copyIP(rr.GatewayAddr), rr.GatewayHost}
 }
 func (rr *ANY) copy() RR {
 	return &ANY{rr.Hdr}
@@ -770,6 +820,9 @@ func (rr *HIP) copy() RR {
 }
 func (rr *HTTPS) copy() RR {
 	return &HTTPS{*rr.SVCB.copy().(*SVCB)}
+}
+func (rr *IPSECKEY) copy() RR {
+	return &IPSECKEY{rr.Hdr, rr.Precedence, rr.GatewayType, rr.Algorithm, copyIP(rr.GatewayAddr), rr.GatewayHost, rr.PublicKey}
 }
 func (rr *KEY) copy() RR {
 	return &KEY{*rr.DNSKEY.copy().(*DNSKEY)}
@@ -935,4 +988,7 @@ func (rr *URI) copy() RR {
 }
 func (rr *X25) copy() RR {
 	return &X25{rr.Hdr, rr.PSDNAddress}
+}
+func (rr *ZONEMD) copy() RR {
+	return &ZONEMD{rr.Hdr, rr.Serial, rr.Scheme, rr.Hash, rr.Digest}
 }
