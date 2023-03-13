@@ -2,7 +2,7 @@
 ## explicit; go 1.16
 github.com/BurntSushi/toml
 github.com/BurntSushi/toml/internal
-# github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b
+# github.com/bradfitz/gomemcache v0.0.0-20230124162541-5f7a7d875746
 ## explicit; go 1.12
 github.com/bradfitz/gomemcache/memcache
 # github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
