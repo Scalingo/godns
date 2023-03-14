@@ -1,4 +1,4 @@
-FROM golang:1.17
+FROM golang:1.20
 LABEL maintainer="Étienne Michon <etienne@scalingo.com>"
 
 RUN go install github.com/cespare/reflex@latest
