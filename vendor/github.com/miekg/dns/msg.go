@@ -265,6 +265,11 @@ loop:
 
 			wasDot = false
 		case '.':
+			if i == 0 && len(s) > 1 {
+				// leading dots are not legal except for the root zone
+				return len(msg), ErrRdata
+			}
+
 			if wasDot {
 				// two dots back to back is not legal
 				return len(msg), ErrRdata
@@ -443,7 +448,7 @@ Loop:
 	return string(s), off1, nil
 }
 
-func packTxt(txt []string, msg []byte, offset int, tmp []byte) (int, error) {
+func packTxt(txt []string, msg []byte, offset int) (int, error) {
 	if len(txt) == 0 {
 		if offset >= len(msg) {
 			return offset, ErrBuf
@@ -453,10 +458,7 @@ func packTxt(txt []string, msg []byte, offset int, tmp []byte) (int, error) {
 	}
 	var err error
 	for _, s := range txt {
-		if len(s) > len(tmp) {
-			return offset, ErrBuf
-		}
-		offset, err = packTxtString(s, msg, offset, tmp)
+		offset, err = packTxtString(s, msg, offset)
 		if err != nil {
 			return offset, err
 		}
@@ -464,32 +466,30 @@ func packTxt(txt []string, msg []byte, offset int, tmp []byte) (int, error) {
 	return offset, nil
 }
 
-func packTxtString(s string, msg []byte, offset int, tmp []byte) (int, error) {
+func packTxtString(s string, msg []byte, offset int) (int, error) {
 	lenByteOffset := offset
-	if offset >= len(msg) || len(s) > len(tmp) {
+	if offset >= len(msg) || len(s) > 256*4+1 /* If all \DDD */ {
 		return offset, ErrBuf
 	}
 	offset++
-	bs := tmp[:len(s)]
-	copy(bs, s)
-	for i := 0; i < len(bs); i++ {
+	for i := 0; i < len(s); i++ {
 		if len(msg) <= offset {
 			return offset, ErrBuf
 		}
-		if bs[i] == '\\' {
+		if s[i] == '\\' {
 			i++
-			if i == len(bs) {
+			if i == len(s) {
 				break
 			}
 			// check for \DDD
-			if i+2 < len(bs) && isDigit(bs[i]) && isDigit(bs[i+1]) && isDigit(bs[i+2]) {
-				msg[offset] = dddToByte(bs[i:])
+			if i+2 < len(s) && isDigit(s[i]) && isDigit(s[i+1]) && isDigit(s[i+2]) {
+				msg[offset] = dddStringToByte(s[i:])
 				i += 2
 			} else {
-				msg[offset] = bs[i]
+				msg[offset] = s[i]
 			}
 		} else {
-			msg[offset] = bs[i]
+			msg[offset] = s[i]
 		}
 		offset++
 	}
@@ -675,9 +675,9 @@ func unpackRRslice(l int, msg []byte, off int) (dst1 []RR, off1 int, err error) 
 
 // Convert a MsgHdr to a string, with dig-like headers:
 //
-//;; opcode: QUERY, status: NOERROR, id: 48404
+// ;; opcode: QUERY, status: NOERROR, id: 48404
 //
-//;; flags: qr aa rd ra;
+// ;; flags: qr aa rd ra;
 func (h *MsgHdr) String() string {
 	if h == nil {
 		return "<nil> MsgHdr"
@@ -742,7 +742,7 @@ func (dns *Msg) packBufferWithCompressionMap(buf []byte, compression compression
 	}
 
 	// Set extended rcode unconditionally if we have an opt, this will allow
-	// reseting the extended rcode bits if they need to.
+	// resetting the extended rcode bits if they need to.
 	if opt := dns.IsEdns0(); opt != nil {
 		opt.SetExtendedRcode(uint16(dns.Rcode))
 	} else if dns.Rcode > 0xF {
@@ -901,6 +901,11 @@ func (dns *Msg) String() string {
 	s += "ANSWER: " + strconv.Itoa(len(dns.Answer)) + ", "
 	s += "AUTHORITY: " + strconv.Itoa(len(dns.Ns)) + ", "
 	s += "ADDITIONAL: " + strconv.Itoa(len(dns.Extra)) + "\n"
+	opt := dns.IsEdns0()
+	if opt != nil {
+		// OPT PSEUDOSECTION
+		s += opt.String() + "\n"
+	}
 	if len(dns.Question) > 0 {
 		s += "\n;; QUESTION SECTION:\n"
 		for _, r := range dns.Question {
@@ -923,10 +928,10 @@ func (dns *Msg) String() string {
 			}
 		}
 	}
-	if len(dns.Extra) > 0 {
+	if len(dns.Extra) > 0 && (opt == nil || len(dns.Extra) > 1) {
 		s += "\n;; ADDITIONAL SECTION:\n"
 		for _, r := range dns.Extra {
-			if r != nil {
+			if r != nil && r.Header().Rrtype != TypeOPT {
 				s += r.String() + "\n"
 			}
 		}
@@ -1055,8 +1060,8 @@ func (dns *Msg) CopyTo(r1 *Msg) *Msg {
 	r1.Compress = dns.Compress
 
 	if len(dns.Question) > 0 {
-		r1.Question = make([]Question, len(dns.Question))
-		copy(r1.Question, dns.Question) // TODO(miek): Question is an immutable value, ok to do a shallow-copy
+		// TODO(miek): Question is an immutable value, ok to do a shallow-copy
+		r1.Question = cloneSlice(dns.Question)
 	}
 
 	rrArr := make([]RR, len(dns.Answer)+len(dns.Ns)+len(dns.Extra))
