@@ -14,7 +14,7 @@ github.com/hoisie/redis
 # github.com/jtolds/gls v4.20.0+incompatible
 ## explicit
 github.com/jtolds/gls
-# github.com/miekg/dns v1.1.52
+# github.com/miekg/dns v1.1.53
 ## explicit; go 1.19
 github.com/miekg/dns
 # github.com/smartystreets/assertions v1.13.0
