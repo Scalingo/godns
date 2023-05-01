@@ -8,8 +8,8 @@ github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0 h1:mjZV3MTu2A5gwfT5G9
 github.com/hoisie/redis v0.0.0-20160730154456-b5c6e81454e0/go.mod h1:pMYMxVaKJqCDC1JUg/XbPJ4/fSazB25zORpFzqsIGIc=
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
-github.com/miekg/dns v1.1.52 h1:Bmlc/qsNNULOe6bpXcUTsuOajd0DzRHwup6D9k1An0c=
-github.com/miekg/dns v1.1.52/go.mod h1:uInx36IzPl7FYnDcMeVWxj9byh7DutNykX4G9Sj60FY=
+github.com/miekg/dns v1.1.54 h1:5jon9mWcb0sFJGpnI99tOMhCPyJ+RPVz5b63MQG0VWI=
+github.com/miekg/dns v1.1.54/go.mod h1:uInx36IzPl7FYnDcMeVWxj9byh7DutNykX4G9Sj60FY=
 github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
 github.com/smartystreets/assertions v1.13.0 h1:Dx1kYM01xsSqKPno3aqLnrwac2LetPvN23diwyr69Qs=
 github.com/smartystreets/assertions v1.13.0/go.mod h1:wDmR7qL282YbGsPy6H/yAsesrxfxaaSlJazyFLYVFx8=
