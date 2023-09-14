@@ -5,5 +5,10 @@ updates:
     allow:
       - dependency-type: "all"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
+    reviewers:
+      - "EtienneM"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
