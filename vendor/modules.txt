@@ -17,7 +17,7 @@ github.com/jtolds/gls
 # github.com/miekg/dns v1.1.56
 ## explicit; go 1.19
 github.com/miekg/dns
-# github.com/smarty/assertions v1.15.0
+# github.com/smarty/assertions v1.15.1
 ## explicit; go 1.18
 github.com/smarty/assertions
 github.com/smarty/assertions/internal/go-diff/diffmatchpatch
