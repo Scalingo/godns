@@ -1,5 +1,8 @@
 # GODNS
 
+> [!IMPORTANT]
+> This repository has been deprecated and archived. Scalingo no longer supports it. Feel free to fork it.
+
 A simple and fast DNS cache server written in Go.
 
 
